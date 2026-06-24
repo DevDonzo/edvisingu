@@ -38,12 +38,9 @@ logger = logging.getLogger("edvisingu.llm")
 # Configuration helpers
 # ---------------------------------------------------------------------------
 
-DEFAULT_MODEL = "claude-sonnet-4-6"
+from core import fleet
 
-# Agent -> model assignment (Manual Section 26.1 / 26.3)
-CODEX_AGENTS = {"hermes-builder"}
-GEMINI_AGENTS = {"hermes-social", "hermes-seo", "hermes-tiktok", "hermes-ads", "hermes-pinterest"}
-HAIKU_AGENTS = {"hermes-ops", "hermes-finance", "hermes-crm", "hermes-whop", "hermes-etsy", "hermes-gumroad"}
+DEFAULT_MODEL = fleet.DEFAULT_MODEL
 
 
 def backend() -> str:
@@ -52,16 +49,8 @@ def backend() -> str:
 
 
 def model_for_agent(agent: str | None) -> str:
-    """Resolve which model an agent would use (Manual Section 26)."""
-    if not agent:
-        return DEFAULT_MODEL
-    if agent in CODEX_AGENTS:
-        return "gpt-4o"
-    if agent in GEMINI_AGENTS:
-        return "gemini-2.0-flash"
-    if agent in HAIKU_AGENTS:
-        return "claude-haiku-4-5"
-    return DEFAULT_MODEL
+    """Resolve which model an agent uses (Manual Section 26) — via core.fleet."""
+    return fleet.model_for(agent)
 
 
 def _provider_for_model(model: str) -> str:

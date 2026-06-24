@@ -1,14 +1,14 @@
-version: "3.9"
-
-x-agent-defaults: &agent-defaults
-  env_file: .env
-  restart: always
-  volumes:
-    - /srv/agent-bus:/agent-bus
+# Generated to use TWO shared images (Dockerfile.router + Dockerfile.agent)
+# instead of 25 duplicate build contexts. Each agent service is the same image
+# parameterized by AGENT_NAME. Edit the fleet in core/fleet.py, not here.
 
 services:
-  fastapi-router:
-    build: ./fastapi-router
+  router:
+    build:
+      context: .
+      dockerfile: Dockerfile.router
+    image: edvisingu/router
+    container_name: router
     ports:
       - "8000:8000"
     env_file: .env
@@ -17,228 +17,378 @@ services:
       - redis
 
   hermes-core:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-core
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-core
+    environment:
+      - AGENT_NAME=hermes-core
     ports:
       - "8001:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-core/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-content:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-content
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-content
+    environment:
+      - AGENT_NAME=hermes-content
     ports:
       - "8002:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-content/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-advisor:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-advisor
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-advisor
+    environment:
+      - AGENT_NAME=hermes-advisor
     ports:
       - "8003:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-advisor/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-credihire:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-credihire
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-credihire
+    environment:
+      - AGENT_NAME=hermes-credihire
     ports:
       - "8004:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-credihire/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-ops:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-ops
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-ops
+    environment:
+      - AGENT_NAME=hermes-ops
     ports:
       - "8005:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-ops/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-social:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-social
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-social
+    environment:
+      - AGENT_NAME=hermes-social
     ports:
       - "8006:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-social/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-builder:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-builder
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-builder
+    environment:
+      - AGENT_NAME=hermes-builder
     ports:
       - "8008:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-builder/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-research:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-research
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-research
+    environment:
+      - AGENT_NAME=hermes-research
     ports:
       - "8009:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-research/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-finance:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-finance
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-finance
+    environment:
+      - AGENT_NAME=hermes-finance
     ports:
       - "8010:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-finance/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-email:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-email
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-email
+    environment:
+      - AGENT_NAME=hermes-email
     ports:
       - "8011:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-email/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-ads:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-ads
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-ads
+    environment:
+      - AGENT_NAME=hermes-ads
     ports:
       - "8012:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-ads/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-seo:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-seo
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-seo
+    environment:
+      - AGENT_NAME=hermes-seo
     ports:
       - "8013:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-seo/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-funnel:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-funnel
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-funnel
+    environment:
+      - AGENT_NAME=hermes-funnel
     ports:
       - "8014:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-funnel/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-etsy:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-etsy
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-etsy
+    environment:
+      - AGENT_NAME=hermes-etsy
     ports:
       - "8015:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-etsy/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-outreach:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-outreach
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-outreach
+    environment:
+      - AGENT_NAME=hermes-outreach
     ports:
       - "8016:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-outreach/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-proposals:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-proposals
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-proposals
+    environment:
+      - AGENT_NAME=hermes-proposals
     ports:
       - "8017:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-proposals/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-crm:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-crm
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-crm
+    environment:
+      - AGENT_NAME=hermes-crm
     ports:
       - "8018:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-crm/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-crediversity:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-crediversity
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-crediversity
+    environment:
+      - AGENT_NAME=hermes-crediversity
     ports:
       - "8019:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-crediversity/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-hireed:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-hireed
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-hireed
+    environment:
+      - AGENT_NAME=hermes-hireed
     ports:
       - "8020:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-hireed/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-educonnect:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-educonnect
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-educonnect
+    environment:
+      - AGENT_NAME=hermes-educonnect
     ports:
       - "8021:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-educonnect/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-whop:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-whop
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-whop
+    environment:
+      - AGENT_NAME=hermes-whop
     ports:
       - "8022:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-whop/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-tiktok:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-tiktok
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-tiktok
+    environment:
+      - AGENT_NAME=hermes-tiktok
     ports:
       - "8023:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-tiktok/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-campaign:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-campaign
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-campaign
+    environment:
+      - AGENT_NAME=hermes-campaign
     ports:
       - "8024:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-campaign/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-gumroad:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-gumroad
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-gumroad
+    environment:
+      - AGENT_NAME=hermes-gumroad
     ports:
       - "8025:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-gumroad/data:/data
       - /srv/agent-bus:/agent-bus
 
   hermes-pinterest:
-    <<: *agent-defaults
-    build: ./vps-agents/agents/hermes-pinterest
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    image: edvisingu/agent
+    container_name: hermes-pinterest
+    environment:
+      - AGENT_NAME=hermes-pinterest
     ports:
       - "8027:8000"
+    env_file: .env
+    restart: always
     volumes:
-      - /srv/hermes-pinterest/data:/data
       - /srv/agent-bus:/agent-bus
 
   open-webui:

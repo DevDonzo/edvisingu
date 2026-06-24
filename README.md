@@ -65,18 +65,27 @@ The switch is the `ARCH_BACKEND` environment variable:
 
 ## Architecture
 
+One codebase, one source of truth (`core/fleet.py`), two ways to run it.
+
 ```
-Dashboard (Next.js :3000)
-        │  HTTP
-        ▼
-demo_server.py (:8000)  ── core/store.py (SQLite)
-        │
-        ├── core/llm.py        shared LLM client (mock | live)
-        ├── core/orchestrator.py + tools/task_bus.py   Agent Task Bus
-        └── 25 specialist agents (vps-agents/agents/hermes-*)
-                routed by model (Sonnet / Haiku / Gemini / GPT-4o)
+core/fleet.py   ← the 25-agent roster + model routing (single source)
+core/llm.py     ← shared LLM client (mock | live), routes via fleet
+core/store.py   ← SQLite data + memory (replaces Supabase/Chroma)
+tools/          ← agent tools (all mock by default, live behind keys)
+souls/          ← 25 personality files (hermes-*.md)
+
+Local demo                          Live VPS (docker-compose)
+──────────                          ─────────────────────────
+Dashboard (Next.js :3000)           router.py  (OpenAI-compatible, :8000)
+      │ HTTP                              │  routes by model
+      ▼                                   ▼
+demo_server.py (:8000, mock)        agent.py × 25 containers
+      │                               (one image, AGENT_NAME picks the soul)
+      └── core/* + tools/*           └── core/* + tools/* + souls/*
 ```
 
+Add an agent by writing `souls/<name>.md` and one line in `core/fleet.py`
+(`scripts/new_agent.py` does both) — everything else derives from the fleet.
 See `docs/BUILD_STATUS.md` for a section-by-section map of the manual to the code.
 
 ---

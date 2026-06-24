@@ -15,6 +15,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 from core import store
 store.ensure_seeded()
+from core import fleet as _fleet
 
 app = FastAPI(title="AI Command Center", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -58,32 +59,12 @@ class CampaignScheduleRequest(BaseModel):
 
 # ── Agent Fleet Config ────────────────────────────────
 
+# ── Agent Fleet Config (derived from core.fleet — single source of truth) ──
+
 FLEET = [
-    {"name": "hermes-core", "port": 8001, "model": "Claude Sonnet 4.6", "role": "Executive Assistant", "status": "online", "category": "core"},
-    {"name": "hermes-content", "port": 8002, "model": "Claude Sonnet 4.6", "role": "Content Factory", "status": "online", "category": "content"},
-    {"name": "hermes-advisor", "port": 8003, "model": "Claude Sonnet 4.6", "role": "Student Advisor", "status": "online", "category": "education"},
-    {"name": "hermes-credihire", "port": 8004, "model": "Claude Sonnet 4.6", "role": "Resume & Career", "status": "online", "category": "education"},
-    {"name": "hermes-ops", "port": 8005, "model": "Claude Haiku 4.5", "role": "System Monitor", "status": "online", "category": "ops"},
-    {"name": "hermes-social", "port": 8006, "model": "Claude Sonnet 4.6", "role": "Community Manager", "status": "online", "category": "content"},
-    {"name": "hermes-builder", "port": 8008, "model": "GPT-4o", "role": "Project Builder", "status": "online", "category": "dev"},
-    {"name": "hermes-research", "port": 8009, "model": "Claude Sonnet 4.6", "role": "Intelligence", "status": "online", "category": "core"},
-    {"name": "hermes-finance", "port": 8010, "model": "Claude Haiku 4.5", "role": "Revenue Tracker", "status": "online", "category": "ops"},
-    {"name": "hermes-email", "port": 8011, "model": "Claude Sonnet 4.6", "role": "Communications", "status": "online", "category": "core"},
-    {"name": "hermes-ads", "port": 8012, "model": "Gemini 2.0 Flash", "role": "Ad Strategist", "status": "online", "category": "content"},
-    {"name": "hermes-seo", "port": 8013, "model": "Gemini 2.0 Flash", "role": "SEO Specialist", "status": "online", "category": "content"},
-    {"name": "hermes-funnel", "port": 8014, "model": "Claude Sonnet 4.6", "role": "Funnel Architect", "status": "online", "category": "revenue"},
-    {"name": "hermes-etsy", "port": 8015, "model": "Claude Haiku 4.5", "role": "Etsy Manager", "status": "online", "category": "revenue"},
-    {"name": "hermes-outreach", "port": 8016, "model": "Claude Sonnet 4.6", "role": "Outbound Sales", "status": "online", "category": "revenue"},
-    {"name": "hermes-proposals", "port": 8017, "model": "Claude Sonnet 4.6", "role": "Proposal Writer", "status": "online", "category": "revenue"},
-    {"name": "hermes-crm", "port": 8018, "model": "Claude Haiku 4.5", "role": "CRM Assistant", "status": "online", "category": "ops"},
-    {"name": "hermes-crediversity", "port": 8019, "model": "Claude Sonnet 4.6", "role": "LMS Builder", "status": "online", "category": "education"},
-    {"name": "hermes-hireed", "port": 8020, "model": "Claude Sonnet 4.6", "role": "WIL Coordinator", "status": "online", "category": "education"},
-    {"name": "hermes-educonnect", "port": 8021, "model": "Claude Sonnet 4.6", "role": "Platform Ops", "status": "online", "category": "education"},
-    {"name": "hermes-whop", "port": 8022, "model": "Claude Haiku 4.5", "role": "Membership Ops", "status": "online", "category": "revenue"},
-    {"name": "hermes-tiktok", "port": 8023, "model": "Gemini 2.0 Flash", "role": "TikTok Creator", "status": "online", "category": "content"},
-    {"name": "hermes-campaign", "port": 8024, "model": "Claude Sonnet 4.6", "role": "Campaign Manager", "status": "online", "category": "content"},
-    {"name": "hermes-gumroad", "port": 8025, "model": "Claude Haiku 4.5", "role": "Product Sales", "status": "online", "category": "revenue"},
-    {"name": "hermes-pinterest", "port": 8027, "model": "Gemini 2.0 Flash", "role": "Pinterest SEO", "status": "online", "category": "content"},
+    {"name": a.name, "port": a.port, "model": a.model_label,
+     "role": a.role, "status": "online", "category": a.category}
+    for a in _fleet.FLEET
 ]
 
 # ── Mock Data ─────────────────────────────────────────
@@ -476,15 +457,7 @@ async def taskbus_demo(req: ChatRequest):
 
 # ── Multi-model routing summary (Manual Section 26) ──
 
-ROUTING = {
-    "claude-sonnet-4-6": ["hermes-core", "hermes-content", "hermes-advisor", "hermes-credihire",
-                            "hermes-research", "hermes-email", "hermes-proposals", "hermes-outreach",
-                            "hermes-crediversity", "hermes-hireed", "hermes-educonnect", "hermes-funnel",
-                            "hermes-campaign"],
-    "claude-haiku-4-5": ["hermes-ops", "hermes-finance", "hermes-crm", "hermes-whop", "hermes-etsy", "hermes-gumroad"],
-    "gemini-2.0-flash": ["hermes-social", "hermes-seo", "hermes-tiktok", "hermes-ads", "hermes-pinterest"],
-    "gpt-4o": ["hermes-builder"],
-}
+ROUTING = _fleet.routing()  # model id -> [agent names], single source of truth
 
 @app.get("/routing")
 def routing():
@@ -499,7 +472,7 @@ def routing():
 @app.get("/monitoring")
 def monitoring():
     services = [
-        {"name": "fastapi-router", "port": 8000, "status": "up", "latency_ms": random.randint(2, 20)},
+        {"name": "router", "port": 8000, "status": "up", "latency_ms": random.randint(2, 20)},
         {"name": "n8n", "port": 5678, "status": "up", "latency_ms": random.randint(5, 40)},
         {"name": "open-webui", "port": 3000, "status": "up", "latency_ms": random.randint(5, 30)},
         {"name": "redis", "port": 6379, "status": "up", "latency_ms": random.randint(1, 5)},

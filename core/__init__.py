@@ -5,4 +5,4 @@ system runs locally with no API keys. Set ARCH_BACKEND=live (and provide the
 relevant keys) to use real cloud providers.
 """
 
-__all__ = ["llm", "store"]
+__all__ = ["fleet", "llm", "store"]

@@ -22,11 +22,9 @@ fi
 # Start the OpenAI-compatible multi-model router (the real VPS entrypoint;
 # same image docker-compose builds). It serves the 25-agent fleet and falls
 # back to the in-process mock when ARCH_BACKEND=mock.
-cd fastapi-router
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
+uvicorn router:app --host 0.0.0.0 --port 8000 --reload &
 ROUTER_PID=$!
 echo "✓ Router running on :8000 (PID: $ROUTER_PID)"
-cd ..
 
 echo ""
 echo "=== Services Running ==="

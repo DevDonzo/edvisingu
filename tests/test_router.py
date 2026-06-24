@@ -3,7 +3,7 @@ offline ($0, no API key) via core.llm.
 
 (The standalone orchestration API in agents/main.py was removed during the
 architecture consolidation — its endpoints live on in demo_server.py for the
-demo and in the fastapi-router + vps-agents fleet for the live VPS path.)
+demo and in router.py + the generic agent.py for the live VPS path.)
 """
 
 import importlib.util
@@ -30,7 +30,7 @@ def offline_env(tmp_path, monkeypatch):
 
 
 def test_router_openai_compatible_offline():
-    mod = _load(ROOT / "fastapi-router" / "main.py", "fastapi_router_main")
+    mod = _load(ROOT / "router.py", "router_main")
     client = TestClient(mod.app)
 
     assert client.get("/health").json()["backend"] == "mock"
@@ -46,9 +46,12 @@ def test_router_openai_compatible_offline():
     assert data["model"] == "claude-haiku-4-5"
 
 
-def test_specialist_agent_app_offline():
-    mod = _load(ROOT / "vps-agents" / "agents" / "hermes-finance" / "app.py", "hermes_finance_app")
+def test_specialist_agent_app_offline(monkeypatch):
+    # One generic agent.py serves the whole fleet; AGENT_NAME selects identity.
+    monkeypatch.setenv("AGENT_NAME", "hermes-finance")
+    mod = _load(ROOT / "agent.py", "agent_app_finance")
     client = TestClient(mod.app)
     assert client.get("/health").json()["agent"] == "hermes-finance"
+    assert client.get("/health").json()["model"] == "claude-haiku-4-5"
     r = client.post("/chat", json={"message": "mrr please"})
     assert r.status_code == 200 and len(r.json()["response"]) > 0

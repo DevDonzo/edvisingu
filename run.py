@@ -55,18 +55,10 @@ def cmd_taskbus(args):
 
 
 def cmd_fleet(_args):
-    from core.llm import CODEX_AGENTS, GEMINI_AGENTS, HAIKU_AGENTS
-    agents = sorted(set(
-        ["hermes-core", "hermes-content", "hermes-advisor", "hermes-credihire", "hermes-ops",
-         "hermes-social", "hermes-builder", "hermes-research", "hermes-finance", "hermes-email",
-         "hermes-ads", "hermes-seo", "hermes-funnel", "hermes-etsy", "hermes-outreach",
-         "hermes-proposals", "hermes-crm", "hermes-crediversity", "hermes-hireed",
-         "hermes-educonnect", "hermes-whop", "hermes-tiktok", "hermes-campaign",
-         "hermes-gumroad", "hermes-pinterest"]
-    ))
-    print(f"{len(agents)} agents:")
-    for a in agents:
-        print(f"  {a:22s} -> {model_for_agent(a)}")
+    from core import fleet
+    print(f"{len(fleet.FLEET)} agents:")
+    for a in fleet.FLEET:
+        print(f"  {a.name:22s} -> {a.model}")
 
 
 def main():

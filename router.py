@@ -2,7 +2,7 @@
 
 OpenAI-compatible facade in front of the 25-agent fleet. Offline ($0) it
 answers in-process via ``core.llm`` (mock); with ARCH_BACKEND=live it forwards
-to the agent containers / model APIs.
+to the agent containers. The roster comes from core.fleet (single source).
 """
 
 import os
@@ -14,25 +14,16 @@ import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-_ROOT = Path(__file__).resolve().parents[1]
+_ROOT = Path(__file__).resolve().parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from core.llm import chat as llm_chat, model_for_agent  # noqa: E402
+from core.fleet import ports as _fleet_ports  # noqa: E402
 
 app = FastAPI(title="EdVisingU Router")
 
-AGENT_PORTS = {
-    "hermes-core": 8001, "hermes-content": 8002, "hermes-advisor": 8003,
-    "hermes-credihire": 8004, "hermes-ops": 8005, "hermes-social": 8006,
-    "hermes-builder": 8008, "hermes-research": 8009, "hermes-finance": 8010,
-    "hermes-email": 8011, "hermes-ads": 8012, "hermes-seo": 8013,
-    "hermes-funnel": 8014, "hermes-etsy": 8015, "hermes-outreach": 8016,
-    "hermes-proposals": 8017, "hermes-crm": 8018, "hermes-crediversity": 8019,
-    "hermes-hireed": 8020, "hermes-educonnect": 8021, "hermes-whop": 8022,
-    "hermes-tiktok": 8023, "hermes-campaign": 8024, "hermes-gumroad": 8025,
-    "hermes-pinterest": 8027,
-}
+AGENT_PORTS = _fleet_ports()  # single source of truth (core.fleet)
 
 
 def _live() -> bool:
