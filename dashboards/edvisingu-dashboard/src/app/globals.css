@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #09090b;
+  --bg-elevated: #111113;
+  --bg-surface: #18181b;
+  --border: #27272a;
+  --border-subtle: #1e1e21;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent: #f59e0b;
+  --accent-dim: rgba(245, 158, 11, 0.08);
+  --accent-border: rgba(245, 158, 11, 0.15);
+  --success: #22c55e;
+  --success-dim: rgba(34, 197, 94, 0.08);
+}
+
+@layer base {
+  * { @apply border-[var(--border)]; }
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Geist', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: rgba(245, 158, 11, 0.2);
+    color: white;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border bg-[var(--bg-elevated)] transition-all;
+    border-color: var(--border-subtle);
+  }
+  .card:hover {
+    border-color: var(--border);
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide;
+  }
+  .dot {
+    @apply h-1.5 w-1.5 rounded-full;
+  }
+  .dot-live {
+    background: var(--success);
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+  }
+  .dot-amber {
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+  }
+  .input-field {
+    @apply w-full rounded-lg border bg-[var(--bg-primary)] px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)];
+    border-color: var(--border-subtle);
+  }
+  .input-field:focus {
+    border-color: var(--accent-border);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all active:scale-[0.97];
+  }
+  .btn-accent {
+    @apply btn text-black;
+    background: var(--accent);
+  }
+  .btn-accent:hover { background: #d97706; }
+  .btn-ghost {
+    @apply btn text-[var(--text-secondary)];
+  }
+  .btn-ghost:hover { background: var(--bg-surface); }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.animate-in { animation: fade-in 0.25s ease-out both; }
+.animate-up { animation: slide-up 0.3s ease-out both; }

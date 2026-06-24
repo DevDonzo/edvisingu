@@ -1,0 +1,291 @@
+version: "3.9"
+
+x-agent-defaults: &agent-defaults
+  env_file: .env
+  restart: always
+  volumes:
+    - /srv/agent-bus:/agent-bus
+
+services:
+  fastapi-router:
+    build: ./fastapi-router
+    ports:
+      - "8000:8000"
+    env_file: .env
+    restart: always
+    depends_on:
+      - redis
+
+  hermes-core:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-core
+    ports:
+      - "8001:8000"
+    volumes:
+      - /srv/hermes-core/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-content:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-content
+    ports:
+      - "8002:8000"
+    volumes:
+      - /srv/hermes-content/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-advisor:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-advisor
+    ports:
+      - "8003:8000"
+    volumes:
+      - /srv/hermes-advisor/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-credihire:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-credihire
+    ports:
+      - "8004:8000"
+    volumes:
+      - /srv/hermes-credihire/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-ops:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-ops
+    ports:
+      - "8005:8000"
+    volumes:
+      - /srv/hermes-ops/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-social:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-social
+    ports:
+      - "8006:8000"
+    volumes:
+      - /srv/hermes-social/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-builder:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-builder
+    ports:
+      - "8008:8000"
+    volumes:
+      - /srv/hermes-builder/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-research:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-research
+    ports:
+      - "8009:8000"
+    volumes:
+      - /srv/hermes-research/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-finance:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-finance
+    ports:
+      - "8010:8000"
+    volumes:
+      - /srv/hermes-finance/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-email:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-email
+    ports:
+      - "8011:8000"
+    volumes:
+      - /srv/hermes-email/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-ads:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-ads
+    ports:
+      - "8012:8000"
+    volumes:
+      - /srv/hermes-ads/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-seo:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-seo
+    ports:
+      - "8013:8000"
+    volumes:
+      - /srv/hermes-seo/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-funnel:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-funnel
+    ports:
+      - "8014:8000"
+    volumes:
+      - /srv/hermes-funnel/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-etsy:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-etsy
+    ports:
+      - "8015:8000"
+    volumes:
+      - /srv/hermes-etsy/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-outreach:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-outreach
+    ports:
+      - "8016:8000"
+    volumes:
+      - /srv/hermes-outreach/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-proposals:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-proposals
+    ports:
+      - "8017:8000"
+    volumes:
+      - /srv/hermes-proposals/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-crm:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-crm
+    ports:
+      - "8018:8000"
+    volumes:
+      - /srv/hermes-crm/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-crediversity:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-crediversity
+    ports:
+      - "8019:8000"
+    volumes:
+      - /srv/hermes-crediversity/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-hireed:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-hireed
+    ports:
+      - "8020:8000"
+    volumes:
+      - /srv/hermes-hireed/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-educonnect:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-educonnect
+    ports:
+      - "8021:8000"
+    volumes:
+      - /srv/hermes-educonnect/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-whop:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-whop
+    ports:
+      - "8022:8000"
+    volumes:
+      - /srv/hermes-whop/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-tiktok:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-tiktok
+    ports:
+      - "8023:8000"
+    volumes:
+      - /srv/hermes-tiktok/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-campaign:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-campaign
+    ports:
+      - "8024:8000"
+    volumes:
+      - /srv/hermes-campaign/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-gumroad:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-gumroad
+    ports:
+      - "8025:8000"
+    volumes:
+      - /srv/hermes-gumroad/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  hermes-pinterest:
+    <<: *agent-defaults
+    build: ./vps-agents/agents/hermes-pinterest
+    ports:
+      - "8027:8000"
+    volumes:
+      - /srv/hermes-pinterest/data:/data
+      - /srv/agent-bus:/agent-bus
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui-data:/app/backend/data
+    env_file: .env
+    restart: always
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    env_file: .env
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8800:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    restart: always
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime-kuma-data:/app/data
+    restart: always
+
+volumes:
+  open-webui-data:
+  n8n-data:
+  redis-data:
+  chroma-data:
+  uptime-kuma-data:

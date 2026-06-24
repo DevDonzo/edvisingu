@@ -1,0 +1,15 @@
+[Unit]
+Description=Hermes Agent Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=edvisingu
+WorkingDirectory=/opt/edvisingu/hermes-gateway
+ExecStart=/opt/edvisingu/hermes-gateway/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 3000
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

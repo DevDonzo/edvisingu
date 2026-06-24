@@ -1,0 +1,52 @@
+{
+  "name": "Content Factory Pipeline",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "content-trigger" },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8000/content/generate",
+        "method": "POST",
+        "bodyParametersUi": {
+          "parameter": [{ "name": "topic", "value": "={{ $json.body.topic }}" }]
+        },
+        "options": {}
+      },
+      "name": "Generate Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.all();\nreturn input.map(item => ({ json: { topic: item.json.body.topic, content: item.json.content, status: 'draft', created_at: new Date().toISOString() } }));"
+      },
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "content_queue",
+        "columns": "topic,content,status,created_at"
+      },
+      "name": "Insert to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Generate Content", "type": "main", "index": 0 }]] },
+    "Generate Content": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
+    "Parse Response": { "main": [[{ "node": "Insert to Supabase", "type": "main", "index": 0 }]] }
+  }
+}

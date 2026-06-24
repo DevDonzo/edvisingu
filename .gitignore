@@ -1,0 +1,17 @@
+.env
+.env.local
+.env.*
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+chroma-data/
+*.log
+.next/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+data/
+.venv/

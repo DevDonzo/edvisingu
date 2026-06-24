@@ -1,0 +1,40 @@
+{
+  "name": "Whop Member Events",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "whop-webhook" },
+      "name": "Whop Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "members",
+        "columns": "email,name,whop_id,plan,joined_at"
+      },
+      "name": "Insert Member",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "hello@edvisingu.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Welcome to EdVisingU!",
+        "text": "Hi {{ $json.name }},\n\nWelcome to the EdVisingU community. We're excited to help you on your education journey.\n\nBest,\nThe EdVisingU Team"
+      },
+      "name": "Welcome Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Whop Webhook": { "main": [[{ "node": "Insert Member", "type": "main", "index": 0 }]] },
+    "Insert Member": { "main": [[{ "node": "Welcome Email", "type": "main", "index": 0 }]] }
+  }
+}
