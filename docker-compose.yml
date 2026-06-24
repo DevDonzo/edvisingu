@@ -267,14 +267,6 @@ services:
       - redis-data:/data
     restart: always
 
-  chromadb:
-    image: chromadb/chroma:latest
-    ports:
-      - "8800:8000"
-    volumes:
-      - chroma-data:/chroma/chroma
-    restart: always
-
   uptime-kuma:
     image: louislam/uptime-kuma:1
     ports:
@@ -287,5 +279,4 @@ volumes:
   open-webui-data:
   n8n-data:
   redis-data:
-  chroma-data:
   uptime-kuma-data:

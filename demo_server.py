@@ -289,7 +289,7 @@ async def chat(req: ChatRequest):
         "model": "Claude Sonnet 4.6",
         "tokens_used": random.randint(800, 2200),
         "latency_ms": random.randint(1200, 3400),
-        "memory_context": "5 relevant documents retrieved from ChromaDB",
+        "memory_context": "5 relevant documents retrieved from the local store (SQLite ai_memory)",
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -503,7 +503,6 @@ def monitoring():
         {"name": "n8n", "port": 5678, "status": "up", "latency_ms": random.randint(5, 40)},
         {"name": "open-webui", "port": 3000, "status": "up", "latency_ms": random.randint(5, 30)},
         {"name": "redis", "port": 6379, "status": "up", "latency_ms": random.randint(1, 5)},
-        {"name": "chromadb", "port": 8800, "status": "up", "latency_ms": random.randint(3, 25)},
     ] + [
         {"name": a["name"], "port": a["port"], "status": "up", "latency_ms": random.randint(10, 60)}
         for a in FLEET

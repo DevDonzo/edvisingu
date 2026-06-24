@@ -24,29 +24,16 @@
     },
     {
       "parameters": {
-        "jsCode": "const input = $input.all();\nreturn input.map(item => ({ json: { topic: item.json.body.topic, content: item.json.content, status: 'draft', created_at: new Date().toISOString() } }));"
+        "jsCode": "// /content/generate already persists each piece to the local SQLite store\n// (content_queue). This node just shapes the API response for downstream use.\nconst input = $input.all();\nreturn input.map(item => ({ json: { topic: item.json.topic, content: item.json.content, status: 'pending', persisted: true } }));"
       },
       "name": "Parse Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 1,
       "position": [690, 300]
-    },
-    {
-      "parameters": {
-        "operation": "insert",
-        "schema": "public",
-        "table": "content_queue",
-        "columns": "topic,content,status,created_at"
-      },
-      "name": "Insert to Supabase",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [910, 300]
     }
   ],
   "connections": {
     "Webhook": { "main": [[{ "node": "Generate Content", "type": "main", "index": 0 }]] },
-    "Generate Content": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] },
-    "Parse Response": { "main": [[{ "node": "Insert to Supabase", "type": "main", "index": 0 }]] }
+    "Generate Content": { "main": [[{ "node": "Parse Response", "type": "main", "index": 0 }]] }
   }
 }

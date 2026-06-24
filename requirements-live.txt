@@ -10,7 +10,7 @@ anthropic==0.34.0
 openai==1.50.0
 google-generativeai==0.8.0
 
-# Agent tools (tools/*.py, agents/main.py)
+# Agent tools (tools/*.py)
 stripe==10.10.0
 PyGithub==2.4.0
 notion-client==2.2.1
@@ -18,13 +18,8 @@ tavily-python==0.5.0
 elevenlabs==1.9.0
 redis==5.1.0
 
-# Vector memory + legacy LangChain Hermes (vector-db/, agents/hermes/)
-chromadb==0.5.5
-langchain==0.3.0
-langchain-community==0.3.0
-langchain-anthropic==0.2.0
-langchain-openai==0.2.0
-
 # NOTE: dropped as unused — sentence-transformers (pulled torch, ~2GB), tiktoken,
-# pdfplumber, schedule, and the Python supabase pkg (data layer is local SQLite
-# via core/store.py; re-add supabase here only if you migrate to hosted Postgres).
+# pdfplumber, schedule, the Python supabase pkg, and ChromaDB + LangChain.
+# The data + memory layer is local SQLite via core/store.py; agents reason
+# through core/llm.py (direct provider SDKs), not LangChain. Re-add a vector DB
+# or hosted Postgres here only if you actually migrate to one.

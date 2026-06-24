@@ -10,22 +10,30 @@
     },
     {
       "parameters": {
-        "operation": "insert",
-        "schema": "public",
-        "table": "members",
-        "columns": "email,name,whop_id,plan,joined_at"
+        "url": "http://localhost:8000/whop/webhook",
+        "method": "POST",
+        "bodyParametersUi": {
+          "parameter": [
+            { "name": "event", "value": "={{ $json.body.event || 'member.created' }}" },
+            { "name": "email", "value": "={{ $json.body.email }}" },
+            { "name": "name", "value": "={{ $json.body.name }}" },
+            { "name": "plan", "value": "={{ $json.body.plan }}" },
+            { "name": "whop_id", "value": "={{ $json.body.whop_id }}" }
+          ]
+        },
+        "options": {}
       },
-      "name": "Insert Member",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
+      "name": "Upsert Member (local store)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
       "position": [470, 300]
     },
     {
       "parameters": {
         "fromEmail": "hello@edvisingu.com",
-        "toEmail": "={{ $json.email }}",
+        "toEmail": "={{ $json.body.email }}",
         "subject": "Welcome to EdVisingU!",
-        "text": "Hi {{ $json.name }},\n\nWelcome to the EdVisingU community. We're excited to help you on your education journey.\n\nBest,\nThe EdVisingU Team"
+        "text": "Hi {{ $json.body.name }},\n\nWelcome to the EdVisingU community. We're excited to help you on your education journey.\n\nBest,\nThe EdVisingU Team"
       },
       "name": "Welcome Email",
       "type": "n8n-nodes-base.emailSend",
@@ -34,7 +42,7 @@
     }
   ],
   "connections": {
-    "Whop Webhook": { "main": [[{ "node": "Insert Member", "type": "main", "index": 0 }]] },
-    "Insert Member": { "main": [[{ "node": "Welcome Email", "type": "main", "index": 0 }]] }
+    "Whop Webhook": { "main": [[{ "node": "Upsert Member (local store)", "type": "main", "index": 0 }]] },
+    "Upsert Member (local store)": { "main": [[{ "node": "Welcome Email", "type": "main", "index": 0 }]] }
   }
 }

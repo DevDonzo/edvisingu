@@ -98,7 +98,7 @@ When you have a VPS and keys, the manual's production path is:
    - plus `STRIPE_SECRET_KEY`, `TAVILY_API_KEY`, `NOTION_TOKEN`, `GITHUB_TOKEN`,
      `WHOP_API_KEY`, `HEYGEN_API_KEY`, `ELEVENLABS_API_KEY` as needed.
 7. **Flip the switch**: `export ARCH_BACKEND=live`.
-8. **Run**: `bash scripts/start.sh` (FastAPI + n8n + Ollama) or the full
+8. **Run**: `bash scripts/start.sh` (multi-model router + n8n) or the full
    `docker compose` fleet (Manual Section 20.7 / 24.6).
 9. **Reverse proxy + SSL** via Nginx + Certbot (Section 21.6); **monitor** with
    Uptime Kuma (Section 25).

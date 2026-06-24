@@ -9,19 +9,19 @@ plus the relevant key.
 |----------------|-----------|---------------|------------------------|
 | 0 | OpenJarvis + hermes-agent gateway | `docs/` notes, README "Go live" | Documented (VPS-only; live deploy) |
 | 1–5 | Folder structure, env, Phase 1 | repo layout, `.env.example`, `.gitignore` | Done |
-| 6.1 | Ollama local models | live fallback in `core/llm.py` | Documented (VPS); mock default |
-| 6.2 | ChromaDB vector memory | `vector-db/test_chroma.py`, `core/store.py` `ai_memory` | Local (SQLite memory table) |
-| 6.3 | n8n automation | `automation/docker-compose.yml`, `tools/n8n_tools.py` | Local mock trigger |
-| 6.4 | FastAPI orchestration API | `agents/main.py` | Done — runs offline via `core.llm` |
-| 7 | Hermes agent + memory | `agents/main.py` `/hermes/chat`, `prompts/hermes_system.txt` | Done (mock LLM) |
-| 8 | Supabase database | **`core/store.py` (SQLite)**, `api-configs/schema.sql` | Done — local replacement |
-| 9 | Content automation | `agents/main.py` `/content/generate`, `demo_server.py`, `workflows/` | Done (persists to store) |
-| 10 | Specialist agents (advisor, CrediHire, social) | `agents/main.py`, `demo_server.py` | Done (mock) |
+| 6.1 | Ollama local models | (dropped) — agents reason via `core/llm.py` cloud SDKs | Not used; removed |
+| 6.2 | ChromaDB vector memory | replaced by `core/store.py` `ai_memory` (SQLite) | Replaced — Chroma dropped (no code used it) |
+| 6.3 | n8n automation | `automation/docker-compose.yml`, `tools/n8n_tools.py`, `workflows/` | Local mock trigger; workflows hit local API |
+| 6.4 | FastAPI orchestration API | `fastapi-router/main.py` (router) + `demo_server.py` (demo) | Done — runs offline via `core.llm` |
+| 7 | Hermes agent + memory | `vps-agents/agents/hermes-core` (+ `SOUL.md`), `demo_server.py` `/hermes/chat` | Done (mock LLM; SQLite memory) |
+| 8 | Database | **`core/store.py` (SQLite)**, `api-configs/schema.sql` | Done — local; Supabase not required |
+| 9 | Content automation | `demo_server.py` `/content/generate`, `workflows/` | Done (persists to store) |
+| 10 | Specialist agents (advisor, CrediHire, social) | `demo_server.py`, `vps-agents/agents/*` | Done (mock) |
 | 11 | Next.js dashboard (7 pages) | `dashboards/edvisingu-dashboard` | Done — 9 pages, `next build` clean |
-| 12 | HeyGen / ElevenLabs / Whop / Discord | `agents/main.py`, `demo_server.py` | Local mock (live behind keys) |
+| 12 | HeyGen / ElevenLabs / Whop / Discord | `demo_server.py` | Local mock (live behind keys) |
 | 13 | Google AI tools | `core/llm.py` Gemini path | Live path ready; mock default |
 | 14 | Security audit | `.gitignore`, key guards in `core/llm.py` + `tools/` | Done (no keys required/shipped) |
-| 15 | Testing & QA | `tests/` (incl. `test_smoke.py`) | Done — 59 tests green, $0 |
+| 15 | Testing & QA | `tests/` (incl. `test_smoke.py`) | Done — 56 tests green, $0 |
 | 16–19 | Deliverables / SOPs / timing | README, this file | Documented |
 | 20 | Hermes Control Room (brain/body) | `vps-agents/agents/*`, `SOUL.md` files | Done (offline agents) |
 | 20.6 / 24.7 | Agent Task Bus | `tools/task_bus.py`, `core/orchestrator.py` | Done — file queue (Redis behind live) |
@@ -39,12 +39,27 @@ plus the relevant key.
 
 - `bash demo.sh` → full system locally, no keys, $0.
 - `python run.py selftest` → green.
-- `python -m pytest` → **59 passed**, no API key, no cost.
+- `python -m pytest` → **56 passed**, no API key, no cost.
 - `npx next build` → 13 routes compile (incl. advisor, credihire, analytics, status).
+
+## Architecture (after consolidation)
+
+Two deployments share one codebase:
+
+- **Local demo** — `demo_server.py` (all-in-one mock API) + `dashboards/` (Next.js).
+  Run with `bash demo.sh`.
+- **Live VPS** — `fastapi-router/main.py` (OpenAI-compatible multi-model router)
+  in front of the 25 `vps-agents/agents/hermes-*` containers, via
+  `docker-compose.yml`. Run with `bash scripts/start.sh` (router) or `docker compose up`.
+
+Both reason through `core/llm.py` and persist to `core/store.py` (SQLite).
+The redundant standalone orchestration API (`agents/main.py`), the legacy
+LangChain/Ollama Hermes (`agents/hermes/`), and the unused ChromaDB + Supabase
+layers were removed — SQLite is the single data + memory layer.
 
 ## What is intentionally NOT executed (requires money/accounts)
 
-- Provisioning a real Hetzner VPS, real Supabase project, real n8n cloud,
-  real Whop/Stripe/HeyGen/ElevenLabs/Tavily accounts.
+- Provisioning a real Hetzner VPS, real n8n cloud, real
+  Whop/Stripe/HeyGen/ElevenLabs/Tavily accounts.
 - These are fully **documented** (README "Go live on Hetzner") and the code path
   is ready: set the key + `ARCH_BACKEND=live`. No code changes needed.
