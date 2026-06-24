@@ -15,10 +15,14 @@ on a Hetzner VPS later by adding keys and flipping one environment variable.
 ```bash
 cd edvisingu
 python3 -m venv venv && source venv/bin/activate   # first time only
-pip install -r requirements.txt                     # first time only
+pip install -r requirements.txt                     # first time only — 6 packages, no torch/SDK bloat
 
 bash demo.sh        # API on :8000 + dashboard on :3000
 ```
+
+Offline needs just six packages (FastAPI, Uvicorn, Pydantic, httpx, python-dotenv,
+pytest). Every paid SDK is lazy-loaded behind `ARCH_BACKEND=live`, so the live-only
+extras live in `requirements-live.txt` and are installed only when you go live.
 
 Open **http://localhost:3000/dashboard**. Swagger lives at **http://localhost:8000/docs**.
 
@@ -85,16 +89,18 @@ When you have a VPS and keys, the manual's production path is:
 2. **Harden**: create a `deploy` user, disable root/password SSH, enable UFW + fail2ban (Section 21.3).
 3. **Install Docker** (Section 21.4) and optionally OpenJarvis + Tailscale.
 4. **Clone** this repo to `/opt/edvisingu`.
-5. **Add keys** to `/opt/edvisingu/.env` (copy `.env.example`):
+5. **Install live extras** (on top of the offline core):
+   `pip install -r requirements.txt -r requirements-live.txt`
+6. **Add keys** to `/opt/edvisingu/.env` (copy `.env.example`):
    - `ANTHROPIC_API_KEY` (Claude — covers most agents)
    - `OPENAI_API_KEY` (GPT-4o — hermes-builder)
    - `GOOGLE_AI_API_KEY` (Gemini — social/SEO/TikTok/ads/pinterest)
    - plus `STRIPE_SECRET_KEY`, `TAVILY_API_KEY`, `NOTION_TOKEN`, `GITHUB_TOKEN`,
-     `SUPABASE_URL/KEY`, `WHOP_API_KEY`, `HEYGEN_API_KEY`, `ELEVENLABS_API_KEY` as needed.
-6. **Flip the switch**: `export ARCH_BACKEND=live`.
-7. **Run**: `bash scripts/start.sh` (FastAPI + n8n + Ollama) or the full
+     `WHOP_API_KEY`, `HEYGEN_API_KEY`, `ELEVENLABS_API_KEY` as needed.
+7. **Flip the switch**: `export ARCH_BACKEND=live`.
+8. **Run**: `bash scripts/start.sh` (FastAPI + n8n + Ollama) or the full
    `docker compose` fleet (Manual Section 20.7 / 24.6).
-8. **Reverse proxy + SSL** via Nginx + Certbot (Section 21.6); **monitor** with
+9. **Reverse proxy + SSL** via Nginx + Certbot (Section 21.6); **monitor** with
    Uptime Kuma (Section 25).
 
 No code changes are required to go live — only keys and `ARCH_BACKEND=live`.

@@ -1,0 +1,30 @@
+# EdVisingU — LIVE MODE EXTRAS (optional; only for ARCH_BACKEND=live on the VPS).
+# Install ON TOP of requirements.txt when wiring real providers:
+#   pip install -r requirements.txt -r requirements-live.txt
+#
+# Each package below is imported lazily, inside an `is_live()` branch, so the
+# offline demo never needs any of them. Add only what you actually switch on.
+
+# LLM providers (core/llm.py, tools/gemini_tools.py)
+anthropic==0.34.0
+openai==1.50.0
+google-generativeai==0.8.0
+
+# Agent tools (tools/*.py, agents/main.py)
+stripe==10.10.0
+PyGithub==2.4.0
+notion-client==2.2.1
+tavily-python==0.5.0
+elevenlabs==1.9.0
+redis==5.1.0
+
+# Vector memory + legacy LangChain Hermes (vector-db/, agents/hermes/)
+chromadb==0.5.5
+langchain==0.3.0
+langchain-community==0.3.0
+langchain-anthropic==0.2.0
+langchain-openai==0.2.0
+
+# NOTE: dropped as unused — sentence-transformers (pulled torch, ~2GB), tiktoken,
+# pdfplumber, schedule, and the Python supabase pkg (data layer is local SQLite
+# via core/store.py; re-add supabase here only if you migrate to hosted Postgres).
